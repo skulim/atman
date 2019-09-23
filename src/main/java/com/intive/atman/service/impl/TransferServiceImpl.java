@@ -43,16 +43,20 @@ public class TransferServiceImpl implements TransferService {
             accountStorage.fundAccount(transactionDTO.getTargetAccountNo(), transactionDTO.getAmount());
 
             // add fund transaction
-            accountStorage.addTransaction(transactionDTO);
+            accountStorage.addTransaction(transactionDTO.getTargetAccountNo(), transactionDTO);
 
             // add charge transaction
             TransactionDTO chargeTransaction = generateChargeTransaction(transactionDTO);
-            accountStorage.addTransaction(chargeTransaction);
+            accountStorage.addTransaction(transactionDTO.getSourceAccountNo(), chargeTransaction);
 
             return chargeTransaction;
         } finally {
             releaseAccountLocks(transactionDTO);
         }
+    }
+
+    public void initAccount(AccountDTO accountDTO) {
+        accountStorage.setAccount(accountDTO);
     }
 
     private void checkIfAccountExist(String accountNo) throws AccountNotFoundException {

@@ -7,6 +7,8 @@ import com.intive.atman.dto.TransactionDTO;
 
 public interface AccountStorage {
 
+    public void setAccount(AccountDTO accountDTO);
+
     /**
      * Returns account DTO for specific account number
      * 
@@ -18,7 +20,7 @@ public interface AccountStorage {
 
     public List<TransactionDTO> getAccountHistory(String accountNo);
 
-    public boolean addTransaction(TransactionDTO transactionDTO);
+    public boolean addTransaction(String accountNo, TransactionDTO transactionDTO);
 
     public void fundAccount(String accountNo, long amount);
 

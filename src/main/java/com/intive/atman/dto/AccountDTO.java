@@ -3,14 +3,21 @@ package com.intive.atman.dto;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.intive.atman.enums.Currency;
 
 public class AccountDTO {
+    @NotEmpty(message = "Please provide a number")
     private String number;
     private String name;
+    @Min(value = 1, message = "Please provide balance")
     private long balance;
     private Currency currency;
 
+    @JsonIgnore
     private Lock lock = new ReentrantLock();
 
     public String getNumber() {

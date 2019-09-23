@@ -2,15 +2,25 @@ package com.intive.atman.dto;
 
 import java.util.Date;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
+
 import com.intive.atman.enums.Currency;
 
 public class TransactionDTO {
 
+    @NotEmpty(message = "Please provide a source account number")
     private String sourceAccountNo;
+    @NotEmpty(message = "Please provide a source account number")
     private String targetAccountNo;
     private Date transactionDate;
+
+    @Min(value = 1, message = "Please provide amount of transaction greater then 1")
     private long amount;
     private Currency currency;
+
+    public TransactionDTO() {
+    }
 
     public TransactionDTO(TransactionDTO transactionDTO) {
         this.sourceAccountNo = transactionDTO.getSourceAccountNo();
