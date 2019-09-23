@@ -1,35 +1,17 @@
-package com.intive.atman.dto;
+package com.intive.atman.entity;
 
 import java.math.BigDecimal;
 import java.util.Date;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotEmpty;
-
+import com.intive.atman.dto.TransactionDTO;
 import com.intive.atman.enums.Currency;
 
-public class TransactionDTO {
-
-    @NotEmpty(message = "Please provide a source account number")
+public class Transaction {
     private String sourceAccountNo;
-    @NotEmpty(message = "Please provide a source account number")
     private String targetAccountNo;
     private Date transactionDate;
-
-    @Min(value = 1, message = "Please provide amount of transaction greater then 1")
     private BigDecimal amount;
     private Currency currency;
-
-    public TransactionDTO() {
-    }
-
-    public TransactionDTO(TransactionDTO transactionDTO) {
-        this.sourceAccountNo = transactionDTO.getSourceAccountNo();
-        this.targetAccountNo = transactionDTO.getTargetAccountNo();
-        this.transactionDate = transactionDTO.getTransactionDate();
-        this.amount = transactionDTO.getAmount();
-        this.currency = transactionDTO.getCurrency();
-    }
 
     public String getSourceAccountNo() {
         return sourceAccountNo;
@@ -60,7 +42,7 @@ public class TransactionDTO {
     }
 
     public void setAmount(BigDecimal amount) {
-        this.amount = amount.setScale(2);
+        this.amount = amount;
     }
 
     public Currency getCurrency() {
@@ -71,4 +53,26 @@ public class TransactionDTO {
         this.currency = currency;
     }
 
+    public TransactionDTO toDTO() {
+        TransactionDTO transactionDTO = new TransactionDTO();
+        transactionDTO.setSourceAccountNo(this.sourceAccountNo);
+        transactionDTO.setTargetAccountNo(this.targetAccountNo);
+        transactionDTO.setTransactionDate(this.transactionDate);
+        transactionDTO.setAmount(this.amount);
+        transactionDTO.setCurrency(this.currency);
+
+        return transactionDTO;
+    }
+
+
+    public static Transaction fromDTO(TransactionDTO transactionDTO) {
+        Transaction transaction = new Transaction();
+        transaction.setSourceAccountNo(transactionDTO.getSourceAccountNo());
+        transaction.setTargetAccountNo(transactionDTO.getTargetAccountNo());
+        transaction.setTransactionDate(transactionDTO.getTransactionDate());
+        transaction.setAmount(transactionDTO.getAmount());
+        transaction.setCurrency(transactionDTO.getCurrency());
+
+        return transaction;
+    }
 }

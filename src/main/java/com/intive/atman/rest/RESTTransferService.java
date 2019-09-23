@@ -1,7 +1,5 @@
 package com.intive.atman.rest;
 
-import java.util.List;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 
@@ -15,11 +13,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.intive.atman.dto.AccountDTO;
 import com.intive.atman.dto.AccountWithHistoryDTO;
 import com.intive.atman.dto.TransactionDTO;
 import com.intive.atman.exception.AccountNotFoundException;
 import com.intive.atman.exception.AccountOperationException;
+import com.intive.atman.exception.TransactionOperationException;
+import com.intive.atman.service.AccountService;
 import com.intive.atman.service.TransferService;
 
 /**
@@ -33,6 +32,7 @@ import com.intive.atman.service.TransferService;
 public class RESTTransferService {
 
     private TransferService transferService;
+    private AccountService accountService;
 
 	/**
 	 * Injection constructor.
@@ -40,19 +40,15 @@ public class RESTTransferService {
 	 * @param componentService {@link ComponentService} instance
 	 */
     @Autowired
-    public RESTTransferService(TransferService transferService) {
+    public RESTTransferService(TransferService transferService, AccountService accountService) {
         this.transferService = transferService;
+        this.accountService = accountService;
 	}
-
-    @GetMapping(path = "/hello")
-    public String hello() {
-        return "hello";
-    }
 
     @GetMapping(path = "/account/{accountNo}")
     public AccountWithHistoryDTO getAccount(@PathVariable("accountNo") @NotEmpty String accountNo) {
         try {
-            return transferService.getAccount(accountNo);
+            return accountService.getAccount(accountNo);
         } catch (AccountOperationException ex) {
             HttpStatus errorStatus = HttpStatus.INTERNAL_SERVER_ERROR;
             if (ex instanceof AccountNotFoundException) {
@@ -62,17 +58,11 @@ public class RESTTransferService {
         }
     }
 
-    @PostMapping(path = "/initAccounts")
-    public void initAccounts(@Valid @RequestBody List<AccountDTO> accountDTO) {
-        accountDTO.stream().forEach(transferService::initAccount);
-        // transferService.initAccount(accountDTO);
-    }
-
     @PostMapping(path = "/transfer")
     public TransactionDTO transfer(@Valid @RequestBody TransactionDTO transactionDTO) {
         try {
             return transferService.transferMoney(transactionDTO);
-        } catch (AccountOperationException ex) {
+        } catch (AccountOperationException | TransactionOperationException ex) {
             HttpStatus errorStatus = HttpStatus.INTERNAL_SERVER_ERROR;
             if( ex instanceof AccountNotFoundException ) {
                 errorStatus = HttpStatus.NOT_FOUND;

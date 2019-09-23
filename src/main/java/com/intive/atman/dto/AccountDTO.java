@@ -1,12 +1,10 @@
 package com.intive.atman.dto;
 
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
+import java.math.BigDecimal;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.intive.atman.enums.Currency;
 
 public class AccountDTO {
@@ -14,11 +12,8 @@ public class AccountDTO {
     private String number;
     private String name;
     @Min(value = 1, message = "Please provide balance")
-    private long balance;
+    private BigDecimal balance;
     private Currency currency;
-
-    @JsonIgnore
-    private Lock lock = new ReentrantLock();
 
     public String getNumber() {
         return number;
@@ -36,12 +31,12 @@ public class AccountDTO {
         this.name = name;
     }
 
-    public long getBalance() {
+    public BigDecimal getBalance() {
         return balance;
     }
 
-    public void setBalance(long balance) {
-        this.balance = balance;
+    public void setBalance(BigDecimal balance) {
+        this.balance = balance.setScale(2);
     }
 
     public Currency getCurrency() {
@@ -52,12 +47,44 @@ public class AccountDTO {
         this.currency = currency;
     }
 
-    public Lock getLock() {
-        return lock;
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((balance == null) ? 0 : balance.hashCode());
+        result = prime * result + ((currency == null) ? 0 : currency.hashCode());
+        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + ((number == null) ? 0 : number.hashCode());
+        return result;
     }
 
-    public void setLock(Lock lock) {
-        this.lock = lock;
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        AccountDTO other = (AccountDTO) obj;
+        if (balance == null) {
+            if (other.balance != null)
+                return false;
+        } else if (!balance.equals(other.balance))
+            return false;
+        if (currency != other.currency)
+            return false;
+        if (name == null) {
+            if (other.name != null)
+                return false;
+        } else if (!name.equals(other.name))
+            return false;
+        if (number == null) {
+            if (other.number != null)
+                return false;
+        } else if (!number.equals(other.number))
+            return false;
+        return true;
     }
 
 }
